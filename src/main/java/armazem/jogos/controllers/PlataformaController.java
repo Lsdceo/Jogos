@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/plataformas")
+@RequestMapping("api/plataformas")
 public class PlataformaController {
     @Autowired
     PlataformaService plataformaService;
