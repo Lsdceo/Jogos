@@ -13,12 +13,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/relatorios")
 public class RelatorioController {
-    @Autowired
-    RelatorioService relatorioService;
 
-    @GetMapping
-    public List<Movimentacao> gerarRelatorio(@RequestParam LocalDateTime inicio, @RequestParam LocalDateTime fim) {
-        return relatorioService.gerarRelatorio(inicio, fim);
-    }
 }
 
