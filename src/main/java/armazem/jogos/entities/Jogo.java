@@ -1,45 +1,40 @@
 package armazem.jogos.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.Min;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
+import java.math.BigDecimal;
 
 @Entity
+@Table(name = "tb_jogos")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Jogo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank(message = "O título é obrigatório")
+    @NotBlank
+    @Column(nullable = false)
     private String titulo;
 
-    @NotBlank(message = "A plataforma é obrigatória")
-    private String plataforma;
+    @Column(length = 1000)
+    private String descricao;
 
-    @NotBlank(message = "O tipo de mídia é obrigatório")
-    private String midia; // física ou digital
+    @NotNull
+    @DecimalMin(value = "0.0", inclusive = false)
+    @Column(precision = 10, scale = 2)
+    private BigDecimal precoSugerido;
 
-    @NotBlank(message = "O gênero é obrigatório")
     private String genero;
-
-    @Min(value = 0, message = "O estoque não pode ser negativo")
-    private int estoque;
-
-    public Jogo() {
-    }
-
-    public Jogo(Long id, String titulo, String plataforma,
-                String midia, String genero, int estoque) {
-        this.id = id;
-        this.titulo = titulo;
-        this.plataforma = plataforma;
-        this.midia = midia;
-        this.genero = genero;
-        this.estoque = estoque;
-    }
+    private String desenvolvedora;
+    private String publicadora;
 
     public Long getId() {
         return id;
@@ -57,20 +52,20 @@ public class Jogo {
         this.titulo = titulo;
     }
 
-    public String getPlataforma() {
-        return plataforma;
+    public String getDescricao() {
+        return descricao;
     }
 
-    public void setPlataforma(String plataforma) {
-        this.plataforma = plataforma;
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 
-    public String getMidia() {
-        return midia;
+    public BigDecimal getPrecoSugerido() {
+        return precoSugerido;
     }
 
-    public void setMidia(String midia) {
-        this.midia = midia;
+    public void setPrecoSugerido(BigDecimal precoSugerido) {
+        this.precoSugerido = precoSugerido;
     }
 
     public String getGenero() {
@@ -81,11 +76,19 @@ public class Jogo {
         this.genero = genero;
     }
 
-    public int getEstoque() {
-        return estoque;
+    public String getDesenvolvedora() {
+        return desenvolvedora;
     }
 
-    public void setEstoque(int estoque) {
-        this.estoque = estoque;
+    public void setDesenvolvedora(String desenvolvedora) {
+        this.desenvolvedora = desenvolvedora;
+    }
+
+    public String getPublicadora() {
+        return publicadora;
+    }
+
+    public void setPublicadora(String publicadora) {
+        this.publicadora = publicadora;
     }
 }

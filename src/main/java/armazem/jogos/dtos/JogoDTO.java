@@ -1,34 +1,24 @@
 package armazem.jogos.dtos;
 
-import armazem.jogos.entities.Jogo;
+import lombok.Data;
+import java.math.BigDecimal;
 
+@Data
 public class JogoDTO {
-
+    private Long id;
     private String titulo;
-    private String plataforma;
-    private String midia; // física ou digital
+    private String descricao;
+    private BigDecimal precoSugerido;
     private String genero;
-    private int estoque;
+    private String desenvolvedora;
+    private String publicadora;
 
-    public JogoDTO(String titulo, String plataforma,
-                   String midia, String genero, int estoque) {
-        this.titulo = titulo;
-        this.plataforma = plataforma;
-        this.midia = midia;
-        this.genero = genero;
-        this.estoque = estoque;
+    public Long getId() {
+        return id;
     }
 
-    public JogoDTO (){
-
-    }
-
-    public JogoDTO(Jogo jogo) {
-        this.titulo = jogo.getTitulo();
-        this.plataforma = jogo.getPlataforma();
-        this.midia = jogo.getMidia();
-        this.genero = jogo.getGenero();
-        this.estoque = jogo.getEstoque();
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getTitulo() {
@@ -39,20 +29,20 @@ public class JogoDTO {
         this.titulo = titulo;
     }
 
-    public String getPlataforma() {
-        return plataforma;
+    public String getDescricao() {
+        return descricao;
     }
 
-    public void setPlataforma(String plataforma) {
-        this.plataforma = plataforma;
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
     }
 
-    public String getMidia() {
-        return midia;
+    public BigDecimal getPrecoSugerido() {
+        return precoSugerido;
     }
 
-    public void setMidia(String midia) {
-        this.midia = midia;
+    public void setPrecoSugerido(BigDecimal precoSugerido) {
+        this.precoSugerido = precoSugerido;
     }
 
     public String getGenero() {
@@ -63,11 +53,19 @@ public class JogoDTO {
         this.genero = genero;
     }
 
-    public int getEstoque() {
-        return estoque;
+    public String getDesenvolvedora() {
+        return desenvolvedora;
     }
 
-    public void setEstoque(int estoque) {
-        this.estoque = estoque;
+    public void setDesenvolvedora(String desenvolvedora) {
+        this.desenvolvedora = desenvolvedora;
+    }
+
+    public String getPublicadora() {
+        return publicadora;
+    }
+
+    public void setPublicadora(String publicadora) {
+        this.publicadora = publicadora;
     }
 }

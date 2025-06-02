@@ -1,77 +1,59 @@
 package armazem.jogos.entities;
 
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "tb_movimentacoes")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class Movimentacao {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotNull
+    @Column(nullable = false)
     private LocalDateTime dataHora;
 
-    @NotBlank(message = "O tipo de movimentação é obrigatório")
-    private String tipo; // entrada, saída, transferência
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TipoMovimentacao tipo;
 
-    @Min(value = 1, message = "A quantidade deve ser maior que zero")
-    private int quantidade;
-
-    @ManyToOne
+    @NotNull
+    @ManyToOne(fetch = FetchType.EAGER) // EAGER para fácil acesso nos DTOs de relatório e Jasper
+    @JoinColumn(name = "jogo_id", nullable = false)
     private Jogo jogo;
 
-    public Movimentacao() {
-    }
+    @NotNull
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "plataforma_id", nullable = false)
+    private Plataforma plataforma;
 
-    public Movimentacao(Long id, LocalDateTime dataHora,
-                        String tipo, int quantidade, Jogo jogo) {
-        this.id = id;
-        this.dataHora = dataHora;
-        this.tipo = tipo;
-        this.quantidade = quantidade;
-        this.jogo = jogo;
-    }
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "deposito_origem_id")
+    private Deposito depositoOrigem;
 
-    public Long getId() {
-        return id;
-    }
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "deposito_destino_id")
+    private Deposito depositoDestino;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    @Min(1)
+    private int quantidade;
 
-    public LocalDateTime getDataHora() {
-        return dataHora;
-    }
+    @Column(precision = 10, scale = 2)
+    private BigDecimal precoUnitarioMomento;
 
-    public void setDataHora(LocalDateTime dataHora) {
-        this.dataHora = dataHora;
-    }
-
-    public String getTipo() {
-        return tipo;
-    }
-
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
-    }
-
-    public int getQuantidade() {
-        return quantidade;
-    }
-
-    public void setQuantidade(int quantidade) {
-        this.quantidade = quantidade;
-    }
-
-    public Jogo getJogo() {
-        return jogo;
-    }
-
-    public void setJogo(Jogo jogo) {
-        this.jogo = jogo;
-    }
+    @Column(length = 500)
+    private String observacao;
 }

@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -12,14 +13,21 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.authorizeHttpRequests(auth -> auth
-                .requestMatchers("/jogos/**").authenticated()
-                .requestMatchers("/movimentacoes/**").authenticated()
-                .requestMatchers("/relatorios/**").authenticated()
-                .anyRequest().permitAll()
-        ).formLogin(Customizer.withDefaults());
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(authorizeRequests ->
+                        authorizeRequests
+                                .requestMatchers("/h2-console/**").permitAll()
+                                // Você pode querer abrir os relatórios PDF para acesso sem autenticação total,
+                                // ou proteger com roles específicas. Por enquanto, vamos manter tudo autenticado.
+                                // .requestMatchers(HttpMethod.GET, "/api/relatorios/**/pdf").permitAll() // Exemplo para abrir PDF
+                                .anyRequest().authenticated()
+                )
+                .httpBasic(Customizer.withDefaults());
+
+        http.headers(headers -> headers.frameOptions(frameOptionsConfig -> frameOptionsConfig.sameOrigin()));
+
         return http.build();
     }
 }
-
