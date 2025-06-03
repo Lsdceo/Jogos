@@ -36,6 +36,17 @@ public class Jogo {
     private String desenvolvedora;
     private String publicadora;
 
+    @Column(length = 2048) // Tamanho adequado para URLs
+    private String urlImagemCapa; // Novo campo
+
+    public String getUrlImagemCapa() {
+        return urlImagemCapa;
+    }
+
+    public void setUrlImagemCapa(String urlImagemCapa) {
+        this.urlImagemCapa = urlImagemCapa;
+    }
+
     public Long getId() {
         return id;
     }

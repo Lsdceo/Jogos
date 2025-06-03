@@ -12,6 +12,15 @@ public class JogoDTO {
     private String genero;
     private String desenvolvedora;
     private String publicadora;
+    private String urlImagemCapa;
+
+    public String getUrlImagemCapa() {
+        return urlImagemCapa;
+    }
+
+    public void setUrlImagemCapa(String urlImagemCapa) {
+        this.urlImagemCapa = urlImagemCapa;
+    }
 
     public Long getId() {
         return id;

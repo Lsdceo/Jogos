@@ -28,6 +28,7 @@ public class JogoController {
         dto.setGenero(jogo.getGenero());
         dto.setDesenvolvedora(jogo.getDesenvolvedora());
         dto.setPublicadora(jogo.getPublicadora());
+        dto.setUrlImagemCapa(jogo.getUrlImagemCapa());
         return dto;
     }
 
@@ -41,6 +42,7 @@ public class JogoController {
         jogo.setGenero(dto.getGenero());
         jogo.setDesenvolvedora(dto.getDesenvolvedora());
         jogo.setPublicadora(dto.getPublicadora());
+        jogo.setUrlImagemCapa(dto.getUrlImagemCapa());
         return jogo;
     }
 
