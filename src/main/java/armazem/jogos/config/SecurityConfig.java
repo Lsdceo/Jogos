@@ -1,10 +1,11 @@
 package armazem.jogos.config;
 
+import armazem.jogos.security.SecurityFilter; // Importe seu novo filtro
 import armazem.jogos.services.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy; // Importe @Lazy
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -14,56 +15,64 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy; // Import para SessionCreationPolicy
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity
+@EnableMethodSecurity // Mantido, caso use @PreAuthorize em algum lugar
 public class SecurityConfig {
 
-    // Opção 1: Mantenha @Autowired para UsuarioService se ele for injetado em outro lugar.
-    // Se não, podemos remover e usar o método configureGlobal.
     private final UsuarioService usuarioService;
-    private final PasswordEncoder passwordEncoder; // Injete PasswordEncoder aqui
+    private final PasswordEncoder passwordEncoder;
+    private final SecurityFilter securityFilter; // Injeção do seu novo filtro
 
-    // Usar injeção via construtor
-    // Usar @Lazy na injeção do UsuarioService no construtor para quebrar o ciclo.
-    // PasswordEncoder pode ser injetado diretamente.
-    public SecurityConfig(@Lazy UsuarioService usuarioService, PasswordEncoder passwordEncoder) {
+    // Construtor atualizado para injetar o SecurityFilter
+    public SecurityConfig(@Lazy UsuarioService usuarioService,
+                          PasswordEncoder passwordEncoder,
+                          SecurityFilter securityFilter) { // Adicionar injeção
         this.usuarioService = usuarioService;
         this.passwordEncoder = passwordEncoder;
+        this.securityFilter = securityFilter;
     }
 
-    // O Bean PasswordEncoder é crucial e deve ser definido aqui.
+    // Bean PasswordEncoder (pode já existir no seu código original, só garantir que é static ou que não há ciclo)
     @Bean
-    public static PasswordEncoder passwordEncoderBean() { // Tornar static ajuda em alguns cenários de ciclo
+    public static PasswordEncoder passwordEncoderBean() {
         return new BCryptPasswordEncoder();
     }
 
-    // Maneira moderna de expor AuthenticationManager como um bean
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    // Alternativa: configurar o DaoAuthenticationProvider explicitamente
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(usuarioService);
-        authProvider.setPasswordEncoder(passwordEncoder); // Use o PasswordEncoder injetado
+        authProvider.setUserDetailsService(usuarioService); // Seu UsuarioService que implementa UserDetailsService
+        authProvider.setPasswordEncoder(passwordEncoder); // PasswordEncoder injetado
         return authProvider;
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults()) // Mantém configuração CORS
+                .csrf(AbstractHttpConfigurer::disable) // Desabilita CSRF (comum para APIs stateless)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // ESSENCIAL PARA JWT
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/api/auth/registrar").permitAll()
+                                .requestMatchers("/api/auth/registrar", "/api/auth/login").permitAll() // Endpoints de autenticação públicos
+                                // Suas regras de autorização existentes:
                                 .requestMatchers(HttpMethod.GET, "/api/jogos/**").hasAnyRole("ADMIN", "USUARIO")
                                 .requestMatchers(HttpMethod.POST, "/api/jogos").hasRole("ADMIN")
                                 .requestMatchers(HttpMethod.PUT, "/api/jogos/**").hasRole("ADMIN")
@@ -83,16 +92,36 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET, "/api/relatorios/**").hasAnyRole("ADMIN", "USUARIO")
                                 .requestMatchers("/api/auth/usuarios/**").hasRole("ADMIN")
                                 .requestMatchers("/api/auth/me").authenticated()
-                                // .requestMatchers("/h2-console/**").permitAll()
-                                .anyRequest().authenticated()
+                                .anyRequest().authenticated() // Todas as outras requisições exigem autenticação
                 )
-                .httpBasic(Customizer.withDefaults())
-                // Explicitamente adicionar nosso DaoAuthenticationProvider
-                .authenticationProvider(authenticationProvider());
-
-
-        // http.headers(headers -> headers.frameOptions(frameOptionsConfig -> frameOptionsConfig.sameOrigin()));
+                // .httpBasic(AbstractHttpConfigurer::disable) // DESABILITAR HTTP BASIC
+                .authenticationProvider(authenticationProvider()) // Adiciona seu provedor de autenticação
+                .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class); // ADICIONA SEU FILTRO JWT
 
         return http.build();
+    }
+
+    // Bean CorsConfigurationSource (mantido como estava ou como você configurou)
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList(
+                "http://localhost:3000",
+                "http://localhost:4200",
+                "http://localhost:5173",
+                "http://localhost:8081"
+        ));
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        configuration.setAllowedHeaders(Arrays.asList(
+                "Authorization", "Content-Type", "Accept", "X-Requested-With",
+                "Origin", "Access-Control-Request-Method", "Access-Control-Request-Headers"
+        ));
+        configuration.setExposedHeaders(Arrays.asList("Authorization"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(3600L);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+        return source;
     }
 }
