@@ -13,16 +13,17 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/relatorios")
+@CrossOrigin(origins = {
+        "http://localhost:5173",
+        "https://precious-granita-3ad396.netlify.app/"
+})
 public class RelatorioController {
 
     private static final Logger logger = LoggerFactory.getLogger(RelatorioController.class);

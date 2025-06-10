@@ -12,6 +12,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/plataformas")
+@CrossOrigin(origins = {
+        "http://localhost:5173",
+        "https://precious-granita-3ad396.netlify.app/"
+})
 public class PlataformaController {
     @Autowired
     PlataformaService plataformaService;

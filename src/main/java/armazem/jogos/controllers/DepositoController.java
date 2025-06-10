@@ -12,6 +12,10 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/depositos")
+@CrossOrigin(origins = {
+        "http://localhost:5173",
+        "https://precious-granita-3ad396.netlify.app/"
+})
 public class DepositoController {
     @Autowired
     DepositoService depositoService;

@@ -14,6 +14,10 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/jogos")
+@CrossOrigin(origins = {
+        "http://localhost:5173",
+        "https://precious-granita-3ad396.netlify.app/"
+})
 public class JogoController {
     @Autowired
     private JogoService jogoService;
