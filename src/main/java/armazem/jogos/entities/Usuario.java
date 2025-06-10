@@ -56,11 +56,12 @@ public class Usuario implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    // Implementação de UserDetails
+    // Implementação de UserDetails - CORRIGIDA
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getNome()))
+                // CORREÇÃO: Adiciona o prefixo "ROLE_" e converte para maiúsculas
+                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getNome().toUpperCase()))
                 .collect(Collectors.toList());
     }
 
@@ -76,24 +77,28 @@ public class Usuario implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
+        // Implemente lógica real se necessário, caso contrário, retorne true
         return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
+        // Implemente lógica real se necessário, caso contrário, retorne true
         return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
+        // Implemente lógica real se necessário, caso contrário, retorne true
         return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return enabled;
+        return this.enabled;
     }
 
+    // Getters e Setters (Lombok @Data já gera, mas incluídos explicitamente aqui também)
     public Long getId() {
         return id;
     }

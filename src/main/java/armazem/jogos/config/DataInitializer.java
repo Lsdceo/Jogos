@@ -27,16 +27,16 @@ public class DataInitializer implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) throws Exception {
-        // Criar Roles se não existirem
-        Role adminRole = roleRepository.findByNome("ROLE_ADMIN").orElseGet(() -> {
+        // Criar Roles se não existirem (agora sem o prefixo "ROLE_")
+        Role adminRole = roleRepository.findByNome("ADMIN").orElseGet(() -> {
             Role newRole = new Role();
-            newRole.setNome("ROLE_ADMIN");
+            newRole.setNome("ADMIN"); // Salva como "ADMIN"
             return roleRepository.save(newRole);
         });
 
-        Role userRole = roleRepository.findByNome("ROLE_USUARIO").orElseGet(() -> {
+        Role userRole = roleRepository.findByNome("USUARIO").orElseGet(() -> {
             Role newRole = new Role();
-            newRole.setNome("ROLE_USUARIO");
+            newRole.setNome("USUARIO"); // Salva como "USUARIO"
             return roleRepository.save(newRole);
         });
 
@@ -48,7 +48,7 @@ public class DataInitializer implements CommandLineRunner {
             adminUser.setEmail("admin@example.com");
             adminUser.setNomeCompleto("Administrador do Sistema");
             adminUser.setEnabled(true);
-            adminUser.setRoles(Set.of(adminRole));
+            adminUser.setRoles(Set.of(adminRole)); // Associa a role "ADMIN"
             usuarioRepository.save(adminUser);
             System.out.println(">>> Usuário admin criado com senha 'adminpass'");
         }
@@ -61,7 +61,7 @@ public class DataInitializer implements CommandLineRunner {
             commonUser.setEmail("usuario@example.com");
             commonUser.setNomeCompleto("Usuário Comum");
             commonUser.setEnabled(true);
-            commonUser.setRoles(Set.of(userRole));
+            commonUser.setRoles(Set.of(userRole)); // Associa a role "USUARIO"
             usuarioRepository.save(commonUser);
             System.out.println(">>> Usuário comum 'usuario' criado com senha 'usuariopass'");
         }

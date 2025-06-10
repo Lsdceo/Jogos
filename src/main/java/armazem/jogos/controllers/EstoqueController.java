@@ -18,7 +18,7 @@ import java.util.Map;
 @RequestMapping("api/estoque")
 @CrossOrigin(origins = {
         "http://localhost:5173",
-        "https://precious-granita-3ad396.netlify.app/"
+        "https://majestic-lebkuchen-9305f3.netlify.app"
 })
 public class EstoqueController {
 

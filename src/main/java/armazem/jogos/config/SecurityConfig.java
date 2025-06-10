@@ -109,7 +109,8 @@ public class SecurityConfig {
                 "http://localhost:3000",
                 "http://localhost:4200",
                 "http://localhost:5173",
-                "http://localhost:8081"
+                "http://localhost:8081",
+                "https://majestic-lebkuchen-9305f3.netlify.app"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList(
