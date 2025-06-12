@@ -73,7 +73,8 @@ public class SecurityConfig {
                         authorizeRequests
                                 .requestMatchers("/api/auth/registrar", "/api/auth/login").permitAll() // Endpoints de autenticação públicos
                                 // Suas regras de autorização existentes:
-                                .requestMatchers(HttpMethod.GET, "/api/jogos/**").hasAnyRole("ADMIN", "USUARIO")
+                                // ALTERADO: Permite acesso público a GET /api/jogos/** para depuração
+                                .requestMatchers(HttpMethod.GET, "/api/jogos/**").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/api/jogos").hasRole("ADMIN")
                                 .requestMatchers(HttpMethod.PUT, "/api/jogos/**").hasRole("ADMIN")
                                 .requestMatchers(HttpMethod.DELETE, "/api/jogos/**").hasRole("ADMIN")
