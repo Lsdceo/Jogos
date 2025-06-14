@@ -186,4 +186,17 @@ public class UsuarioService implements UserDetailsService {
                          .collect(Collectors.toSet())); // Usando getAuthority() que inclui "ROLE_"
         return dto;
     }
+
+    // --- MÉTODO TEMPORÁRIO PARA GERAR HASH BCrypt ---
+    // Chame este método LOCALMENTE para gerar o hash da senha.
+    // REMOVA ESTE MÉTODO COMPLETO DEPOIS DE OBTER O HASH E USÁ-LO NO SEU SCRIPT SQL.
+    public static void generateBCryptHash(String password) {
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String hashedPassword = encoder.encode(password);
+        System.out.println("-------------------------------------------------------");
+        System.out.println("BCrypt Hash para a senha '" + password + "':");
+        System.out.println(hashedPassword);
+        System.out.println("-------------------------------------------------------");
+    }
+    // --- FIM MÉTODO TEMPORÁRIO ---
 }
