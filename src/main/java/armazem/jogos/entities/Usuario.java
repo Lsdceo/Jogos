@@ -65,7 +65,6 @@ public class Usuario implements UserDetails {
                 .collect(Collectors.toList());
     }
 
-    }
 
     @Override
     public String getPassword() {
