@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -56,15 +58,21 @@ public class Usuario implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    // Implementação de UserDetails - CORRIGIDA
+    private static final Logger logger = LoggerFactory.getLogger(Usuario.class); // Adicionar Logger aqui também
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        logger.info("Getting authorities for user: {}", this.username);
         return roles.stream()
-                // A entidade Role já deve ter o nome com prefixo (ex: "ROLE_ADMIN")
-                .map(role -> new SimpleGrantedAuthority(role.getNome()))
+                .map(role -> {
+                    String roleName = role.getNome();
+                    logger.info("Processing role from entity: '{}'", roleName);
+                    SimpleGrantedAuthority authority = new SimpleGrantedAuthority(roleName);
+                    logger.info("Created GrantedAuthority: '{}'", authority.getAuthority());
+                    return authority;
+                })
                 .collect(Collectors.toList());
     }
-
 
     @Override
     public String getPassword() {
