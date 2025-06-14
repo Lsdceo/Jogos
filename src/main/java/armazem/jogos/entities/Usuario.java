@@ -60,9 +60,11 @@ public class Usuario implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return roles.stream()
-                // CORREÇÃO: Adiciona o prefixo "ROLE_" e converte para maiúsculas
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role.getNome().toUpperCase()))
+                // A entidade Role já deve ter o nome com prefixo (ex: "ROLE_ADMIN")
+                .map(role -> new SimpleGrantedAuthority(role.getNome()))
                 .collect(Collectors.toList());
+    }
+
     }
 
     @Override
