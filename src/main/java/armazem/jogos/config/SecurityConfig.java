@@ -129,7 +129,7 @@ public class SecurityConfig {
                 "http://localhost:5173",
                 "http://localhost:8081",
                 "https://majestic-lebkuchen-9305f3.netlify.app",
-                "front-jogos.vercel.app"
+                "https://front-jogos.vercel.app"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList(
