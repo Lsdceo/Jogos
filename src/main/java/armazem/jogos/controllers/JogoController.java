@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @CrossOrigin(origins = {
         "http://localhost:5173",
         "https://majestic-lebkuchen-9305f3.netlify.app",
-        "front-jogos.vercel.app"
+        "https://front-jogos.vercel.app"
 })
 public class JogoController {
     @Autowired
